@@ -21,7 +21,7 @@ Template:
 
 - Question answered
 - Search coverage
-- Comparison table or structured bullets — include evidence depth tag per paper and full-text URL when available
+- Comparison table or structured bullets, include evidence depth tag per paper and full-text URL when available
 - Key differences: methods, data, assumptions, findings, limitations
 - Distinguish claims sourced from full text versus abstract-only papers
 - Recommendation: which papers to read first and why
@@ -33,9 +33,9 @@ Use when the user wants to know what the literature says about a claim.
 Template:
 
 - Bottom line first
-- Strength of evidence — note how many papers were assessed from full text vs abstract only
-- Strongest supporting papers — include evidence depth tag and full-text URL when available
-- Conflicting or limiting papers — include evidence depth tag
+- Strength of evidence, note how many papers were assessed from full text vs abstract only
+- Strongest supporting papers, include evidence depth tag and full-text URL when available
+- Conflicting or limiting papers, include evidence depth tag
 - Distinguish claims backed by full-text reading from those inferred from abstracts
 - Gaps and uncertainty
 
@@ -45,9 +45,9 @@ Use when the field is broad or the user is new to it.
 
 Template:
 
-- Surveys and review papers — include evidence depth tag and full-text URL when available
-- Seminal anchors — include evidence depth tag and full-text URL when available
-- Strong recent papers — include evidence depth tag and full-text URL when available
+- Surveys and review papers, include evidence depth tag and full-text URL when available
+- Seminal anchors, include evidence depth tag and full-text URL when available
+- Strong recent papers, include evidence depth tag and full-text URL when available
 - Benchmarks or datasets
 - Open problems or disagreements
 
@@ -73,8 +73,8 @@ Flag these explicitly when relevant:
 
 Tag every paper in the output with one of:
 
-- `[Full text]` — full paper was read and claims are sourced from the content
-- `[Abstract only]` — only the abstract was available; claims are limited to what the abstract states
-- `[Metadata only]` — only title, venue, and citation metadata were available
+- `[Full text]`: full paper was read and claims are sourced from the content
+- `[Abstract only]`: only the abstract was available; claims are limited to what the abstract states
+- `[Metadata only]`: only title, venue, and citation metadata were available
 
 Include the full-text URL alongside the paper link when available, so the user can access the same source.

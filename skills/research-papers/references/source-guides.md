@@ -22,7 +22,7 @@ Use this file when deciding where to search, how to interpret each source, and w
 | Semantic Scholar | OA PDF URL | Points to external OA via `openAccessPdf` | Medium |
 | SSRN | Sometimes | PDF from abstract page | Low |
 | ACM DL | Rarely | Blocked by bot protection | Low |
-| DBLP | No | Bibliographic only — use DOI/arXiv ID to resolve elsewhere | N/A |
+| DBLP | No | Bibliographic only, use DOI/arXiv ID to resolve elsewhere | N/A |
 
 ## Source Notes
 

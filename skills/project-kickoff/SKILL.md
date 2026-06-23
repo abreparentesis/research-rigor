@@ -5,7 +5,7 @@ description: >-
   the full decision-first kickoff: design-spec (the WHAT), prior-art-check
   (does it already exist), a written Decision Record, convergent-review to harden
   the decisions by argument, and a cheapest-first de-risking pass for the
-  assumptions argument can't settle — THEN hands to implementation-plan. Use when the
+  assumptions argument can't settle, THEN hands to implementation-plan. Use when the
   user says "new project", "let's build X", "kick off", "start a feature", or
   begins substantial creative work where the consequential decisions matter more
   than the implementation steps. Wraps design-spec as its first stage; do not
@@ -15,9 +15,9 @@ description: >-
 # Project Kickoff
 
 The most expensive error in a new project is a decision error: you build the
-wrong thing well, and no plan fixes that. This skill front-loads the decisions —
+wrong thing well, and no plan fixes that. This skill front-loads the decisions,
 captures them explicitly, hardens them, and resolves the ones that need evidence
-— before any "how" work begins.
+before any "how" work begins.
 
 It is pure orchestration. It invokes three existing skills unchanged and owns two
 new artifacts: the **Decision Record** and the **De-risking Queue**.
@@ -32,9 +32,9 @@ new artifacts: the **Decision Record** and the **De-risking Queue**.
 ## When NOT to use
 - Trivial or single-file changes, renames, typos, format-only edits.
 - Work fully contained in a module the user is already editing.
-- A truly simple feature where design-spec's short-design path is enough —
+- A truly simple feature where design-spec's short-design path is enough,
   invoke `design-spec` directly instead.
-- Fixing a bug — that's `systematic-debugging`, not a kickoff.
+- Fixing a bug, that's `systematic-debugging`, not a kickoff.
 
 ## What this skill owns vs delegates
 
@@ -53,24 +53,24 @@ Do not reimplement the delegated skills. Invoke them and let them run.
 
 Create a task per item and complete them in order:
 
-1. **Lightweight prior-art scan** — a 60-second "does this category of thing
+1. **Lightweight prior-art scan**, a 60-second "does this category of thing
    exist?" pass to inform the questions. NOT the full search yet.
-2. **Brainstorm** — invoke `design-spec`. It explores context, asks
+2. **Brainstorm**, invoke `design-spec`. It explores context, asks
    questions one at a time, proposes 2-3 approaches, and writes its design spec.
-   **Intercept its terminal handoff:** when it would invoke implementation-plan, stop —
+   **Intercept its terminal handoff:** when it would invoke implementation-plan, stop,
    the remaining stages run first.
-3. **Full prior-art** — invoke `prior-art-check` now that scope is crisp. This is
+3. **Full prior-art**, invoke `prior-art-check` now that scope is crisp. This is
    design-spec's "Search Before Building" phase done properly. Its
    Adopt/Extend/Compose/Build verdict becomes one decision in the record.
-4. **Write the Decision Record** — enrich design-spec's spec with the explicit
+4. **Write the Decision Record**, enrich design-spec's spec with the explicit
    decision structure (template below). One source of truth.
-5. **Harden by argument** — invoke `convergent-review` on the Decision Record with
+5. **Harden by argument**, invoke `convergent-review` on the Decision Record with
    design/spec lenses, critics aimed at the *decisions and assumptions*, not the
    prose. It prunes YAGNI decisions and sharpens the rest until K clean rounds.
-6. **De-risk by evidence** — for decisions flagged `Resolved by: evidence`, run
+6. **De-risk by evidence**, for decisions flagged `Resolved by: evidence`, run
    the De-risking Queue cheapest-and-most-fatal first. A killed or changed
    decision loops back to step 4 (re-harden the delta only).
-7. **Plan** — once the record is both argued-clean and evidence-resolved, invoke
+7. **Plan**, once the record is both argued-clean and evidence-resolved, invoke
    `implementation-plan`.
 
 ## Flow
@@ -89,7 +89,7 @@ Create a task per item and complete them in order:
 
 Two ordering rules that make this correct:
 - **Prune before you probe.** convergent-review runs before the evidence probes so
-  it can delete decisions argument can settle — you don't spend a spike on a
+  it can delete decisions argument can settle, you don't spend a spike on a
   decision YAGNI will cut. The most existential probe (does it already exist?) is
   already answered by stage 3, before any hardening.
 - **The arrow is not one-way.** An evidence probe that kills or changes a decision
@@ -107,7 +107,7 @@ design-spec's design sits below it as the supporting detail.
 
 ### D<n>: <decision title>
 - **Decision:** <what was chosen>
-- **Alternatives considered:** <the real options — from design-spec's approaches
+- **Alternatives considered:** <the real options, from design-spec's approaches
   and prior-art's candidates, not strawmen>
 - **Why this one:** <reason>
 - **Load-bearing assumption:** <the one thing that must be true for this to be right>
@@ -119,12 +119,12 @@ design-spec's design sits below it as the supporting detail.
 
 The `Resolved by` flag is the router: `argument` decisions go to convergent-review;
 `evidence` decisions go to the De-risking Queue. The build-vs-adopt verdict from
-prior-art is itself a decision here — and prior-art was its cheapest probe.
+prior-art is itself a decision here, and prior-art was its cheapest probe.
 
 ## De-risking Queue (owned artifact)
 
 Only the decisions flagged `Resolved by: evidence`. Append it to the same file.
-Order so the probes that could cheaply kill the whole design sit at the top — run
+Order so the probes that could cheaply kill the whole design sit at the top, run
 top-down and stop the moment a fatal probe comes back negative.
 
 ```markdown
@@ -137,14 +137,14 @@ top-down and stop the moment a fatal probe comes back negative.
 Harvested from `idea-to-test-map`'s mechanism (the one-thing-that-must-be-true +
 cheapest-resolving-test + cheapest-most-fatal-first ordering), generalized from
 market bets to technical assumptions. The venture framing, the Alive/Contingent/Dead
-labels, and the HTML render are intentionally dropped — a markdown table is enough.
+labels, and the HTML render are intentionally dropped, a markdown table is enough.
 
 This stage is conditional: if every decision is `Resolved by: argument` (settled by
-reasoning plus prior-art), there is nothing to probe — skip it. Don't manufacture a
+reasoning plus prior-art), there is nothing to probe, skip it. Don't manufacture a
 test for a decision argument already closed.
 
 ## Final report
 
 End with: which path prior-art recommended, the convergent-review trajectory
-(e.g. 5 → 1 → 0), any decision a probe changed, and the spec path — then the
+(e.g. 5 → 1 → 0), any decision a probe changed, and the spec path, then the
 implementation-plan handoff.

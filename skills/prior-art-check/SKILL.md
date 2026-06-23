@@ -1,9 +1,9 @@
 ---
 name: prior-art-check
-description: Use AFTER scoping is clear (or as the structured-search phase inside `design-spec`) and BEFORE writing any custom code for a non-trivial feature, module, integration, library, service, or utility. Searches GitHub (PRIMARY), npm/PyPI, HuggingFace Hub (pretrained models, for ML/AI features), MCP server catalogs (ComposioHQ + VoltAgent awesome lists), managed-API providers (RapidAPI, Composio, Pipedream, Zapier), and — for algorithm- or research-shaped features only — academic prior art (EXA fast pass, escalating to the `research-papers` lit-review skill, with a keyless OpenAlex fallback), then returns a structured Adopt / Extend / Compose / Build recommendation with maturity signals. Complements design-spec — design-spec clarifies WHAT to build, prior-art-check determines IF it already exists.
+description: Use AFTER scoping is clear (or as the structured-search phase inside `design-spec`) and BEFORE writing any custom code for a non-trivial feature, module, integration, library, service, or utility. Searches GitHub (PRIMARY), npm/PyPI, HuggingFace Hub (pretrained models, for ML/AI features), MCP server catalogs (ComposioHQ + VoltAgent awesome lists), managed-API providers (RapidAPI, Composio, Pipedream, Zapier), and, for algorithm- or research-shaped features only, academic prior art (EXA fast pass, escalating to the `research-papers` lit-review skill, with a keyless OpenAlex fallback), then returns a structured Adopt / Extend / Compose / Build recommendation with maturity signals. Complements design-spec, design-spec clarifies WHAT to build, prior-art-check determines IF it already exists.
 ---
 
-# prior-art-check — Don't Build What Already Exists
+# prior-art-check: Don't Build What Already Exists
 
 Systematizes the "search for existing solutions before implementing" discipline.
 Inherits the 5-phase workflow from `affaan-m/ECC` `search-first` and the explicit
@@ -22,7 +22,7 @@ These skills CHAIN, they don't compete:
    "Search Before Building" phase: real `gh search`, `npm search`, MCP catalog
    sweeps, managed-API checks, and a scored Adopt / Extend / Compose / Build
    recommendation.
-3. **Code** comes after — informed by both phases.
+3. **Code** comes after, informed by both phases.
 
 If scope is already crisp (the user gave a specific feature with constraints),
 skip straight to this skill. If scope is vague ("build me a chat app"),
@@ -36,7 +36,7 @@ crisp enough to query a registry. Examples:
 - "let's add real-time chat with auth" (after design-spec has clarified scale, auth provider, persistence)
 - "build a PDF parser for invoice extraction, must run offline"
 - "implement rate limiting per-user, sliding window"
-- "integrate Stripe billing — recurring subscriptions only"
+- "integrate Stripe billing, recurring subscriptions only"
 - "set up a Redis-backed job queue for image resizing"
 
 **Manual invocation:** `/prior-art <topic>` (skips design-spec when scope is
@@ -47,16 +47,16 @@ already clear)
 - Work is fully contained inside an existing module the user is already editing
 - User explicitly said "skip the search, just build it"
 - Task is exploratory question-answering, not implementation
-- Scope is still vague — defer to `design-spec` to scope first
+- Scope is still vague, defer to `design-spec` to scope first
 
 ## Workflow
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  0. PREFLIGHT — what channels can I actually search?    │
+│  0. PREFLIGHT - what channels can I actually search?    │
 │     Report missing tools honestly, don't silent-skip.    │
 ├─────────────────────────────────────────────────────────┤
-│  1. SCOPE — what is actually needed?                    │
+│  1. SCOPE - what is actually needed?                    │
 │     One-sentence problem statement.                      │
 │     Language/runtime/framework constraints.              │
 │     Hard constraints (license, offline, compliance).     │
@@ -77,13 +77,13 @@ already clear)
 │     stars, last-push recency, contributor count,         │
 │     license, fit-to-need, integration cost               │
 ├─────────────────────────────────────────────────────────┤
-│  4. DECIDE — present matrix, name a recommendation      │
+│  4. DECIDE - present matrix, name a recommendation      │
 ├─────────────────────────────────────────────────────────┤
-│  5. IMPLEMENT — adopt / extend / compose / build        │
+│  5. IMPLEMENT - adopt / extend / compose / build        │
 └─────────────────────────────────────────────────────────┘
 ```
 
-## Phase 0 — Preflight
+## Phase 0: Preflight
 
 Before searching, check tool availability. Report each channel's status; do not
 silently skip a channel that is unavailable.
@@ -98,7 +98,7 @@ silently skip a channel that is unavailable.
 | Academic (gated) | EXA (`mcp__exa__web_search_exa`/`exa:search`) → the bundled `research-papers` skill → OpenAlex `curl -s 'https://api.openalex.org/works?search=test'` (keyless) | none available → `WebSearch` arxiv.org |
 | MCP catalogs | `gh` to list contents | skip with note |
 
-## Phase 1 — Scope
+## Phase 1: Scope
 
 State, in one sentence each:
 1. What functionality is needed
@@ -107,21 +107,21 @@ State, in one sentence each:
 
 Do NOT proceed past this phase if the scope is ambiguous. Ask the user.
 
-## Phase 2 — Parallel search
+## Phase 2: Parallel search
 
 Issue **all of these in a single tool-call turn** so they run concurrently. Time
 budget: 30-90 seconds for the whole phase.
 
-### a) GitHub (PRIMARY — heaviest weight)
+### a) GitHub (PRIMARY, heaviest weight)
 
 Run at least two of these in parallel:
 
 ```bash
-# Topic + maturity filter — prefer maintained, real projects
+# Topic + maturity filter, prefer maintained, real projects
 gh search repos "<topic>" --sort=stars --limit=15
 gh search repos "<topic>" --language=<lang> --sort=updated --limit=10
 
-# Code search — finds projects that EXPOSE the API you want
+# Code search, finds projects that EXPOSE the API you want
 gh search code "<distinctive function or concept>" --limit=20
 ```
 
@@ -132,22 +132,22 @@ unless its star count alone justifies it.
 ### b) Package registries (npm + PyPI)
 
 ```bash
-# npm — keyword search, sorted by quality
+# npm, keyword search, sorted by quality
 npm search "<topic>" --searchlimit 15
 
-# PyPI — uses pip's search-via-pypi.org fallback or WebFetch
+# PyPI, uses pip's search-via-pypi.org fallback or WebFetch
 python3 -m pip index versions <best-guess-package-name> 2>&1 | head
 # Or:
 # WebFetch  https://pypi.org/search/?q=<topic>
 ```
 
-Cross-check with GitHub: the npm/PyPI package often points to a GitHub repo —
+Cross-check with GitHub: the npm/PyPI package often points to a GitHub repo,
 use that as a signal of maintenance and adoption.
 
 ### c) HuggingFace Hub (pretrained models)
 
-If the feature involves ML/AI — NER, classification, embeddings, transcription,
-translation, summarization, vision, OCR, etc. — a pretrained model very likely
+If the feature involves ML/AI, NER, classification, embeddings, transcription,
+translation, summarization, vision, OCR, etc., a pretrained model very likely
 already exists, and adopting one beats training from scratch. Search the public
 Hub API (returns JSON, no auth needed):
 
@@ -171,7 +171,7 @@ Fallback if `curl`/`jq` unavailable: `WebFetch https://huggingface.co/models?sea
 Capture per candidate: **downloads** (adoption), **likes**, **license**
 (`cardData.license`), **lastModified** (maintenance), **pipeline_tag** (task fit),
 and model **size in params** where deployment cost matters. These map directly
-onto the Phase 3 axes — downloads→Adoption, lastModified→Maintenance,
+onto the Phase 3 axes, downloads→Adoption, lastModified→Maintenance,
 license→License, pipeline_tag/size→Fit. Beware permissive-looking models with
 non-commercial or gated licenses (e.g. some Llama/CC-BY-NC weights); check
 `cardData.license` before recommending Adopt.
@@ -211,28 +211,28 @@ geocoding, payments, search, translation, transcription, moderation):
 Capture: pricing per call/month, free tier, SLA, compliance (SOC2/HIPAA if user
 mentioned).
 
-### f) Academic / algorithmic prior art (GATED — EXA first, escalate as needed)
+### f) Academic / algorithmic prior art (GATED, EXA first, escalate as needed)
 
-Fire this channel ONLY when the feature is **algorithm- or research-shaped** —
+Fire this channel ONLY when the feature is **algorithm- or research-shaped**,
 a novel method, a non-obvious data structure, an ML/AI approach, or anything
 where the right "existing solution" is a published *method* rather than an
 installable package. Skip it for plumbing (CRUD, integrations, infra glue,
-known-SaaS-shaped problems) — there, papers are noise.
+known-SaaS-shaped problems), there, papers are noise.
 
 This channel does NOT return an Adopt target. It informs the **Build** path:
 when nothing installable fits, the seminal method tells you *what* to implement
 (and often links a reference implementation) instead of reinventing it.
 
-Three tiers, cheapest first — stop as soon as you have the answer:
+Three tiers, cheapest first, stop as soon as you have the answer:
 
-**1. Fast pass — EXA** (`mcp__exa__web_search_exa`, or the `exa:search` skill).
+**1. Fast pass, EXA** (`mcp__exa__web_search_exa`, or the `exa:search` skill).
 Already available, no key, no scholarly rate limits. One semantic query usually
 surfaces the key papers, the canonical repo, AND the surrounding discussion in a
 single shot. For "is there a known approach to <X>?" this is normally enough.
-EXA's blind spot: it has **no citation graph** — it cannot tell you which paper
+EXA's blind spot: it has **no citation graph**, it cannot tell you which paper
 is the *most influential* or trace what cites what. When that matters, escalate.
 
-**2. Rigorous pass — the bundled `research-papers` skill** (ships in this
+**2. Rigorous pass, the bundled `research-papers` skill** (ships in this
 plugin; invoke it by name). Runs as an
 isolated Opus subagent across arXiv, OpenAlex, DBLP, Semantic Scholar, PubMed,
 SSRN with **influence/recency ranking, citation-graph traversal, dedup, and
@@ -241,9 +241,9 @@ or pin down *the* canonical reference, not just relevant hits. Trigger with the
 topic as a method search: *"find and compare published methods for <topic>"*.
 (It already leans on OpenAlex, so it needs no Semantic Scholar key.)
 
-**3. Keyless API fallback — OpenAlex** (no EXA, no skill). OpenAlex (OurResearch;
-240M+ works) is genuinely keyless — just add your email for the faster "polite
-pool", no form, no approval — and it carries the same citation-graph data as
+**3. Keyless API fallback, OpenAlex** (no EXA, no skill). OpenAlex (OurResearch;
+240M+ works) is genuinely keyless, just add your email for the faster "polite
+pool", no form, no approval, and it carries the same citation-graph data as
 Semantic Scholar across a broader corpus:
 
 ```bash
@@ -254,9 +254,9 @@ curl -s "https://api.openalex.org/works?search=<topic>&sort=cited_by_count:desc&
 
 (Semantic Scholar's `/graph/v1/paper/search` also works key-less but shares a
 rate pool that 429s; its key is request-by-form and dev-oriented, not strictly
-academic — OpenAlex sidesteps the question, so prefer it.)
+academic, OpenAlex sidesteps the question, so prefer it.)
 
-**Second hop (all tiers) — bridge papers to code.** Papers aren't adoptable, so
+**Second hop (all tiers), bridge papers to code.** Papers aren't adoptable, so
 take the top result's title / arXiv ID / DOI and run a GitHub pass (`gh search
 repos "<title or method> implementation"`) to find the reference or community
 implementation. Papers With Code, the old paper→code linker, was sunset in 2025,
@@ -266,7 +266,7 @@ Map onto the Phase 3 axes: `cited_by_count` → Adoption, `publication_year` →
 Maintenance/recency, title/abstract → fast Fit triage, `doi` / `open_access` →
 the route to a usable implementation.
 
-## Phase 3 — Rank
+## Phase 3: Rank
 
 For each candidate, score on these axes (1-5):
 
@@ -274,14 +274,14 @@ For each candidate, score on these axes (1-5):
 |---|---|
 | Fit | Does it actually do what we need, with our language/runtime? |
 | Maintenance | Pushed in last 6 months? Active issues? Contributor count? |
-| Adoption | Stars / downloads / dependents — proxies for "battle-tested" |
+| Adoption | Stars / downloads / dependents, proxies for "battle-tested" |
 | License | MIT / Apache / BSD = green. GPL / AGPL = think before adopting. No license = avoid. |
 | Integration cost | How much glue code? Does it pull in 50 transitive deps? |
 | Risk | Single-maintainer? Last commit 3 years ago? Known CVEs? |
 
 Drop anything scoring ≤2 on Fit or Maintenance. Keep at most the top 5.
 
-## Phase 4 — Decide
+## Phase 4: Decide
 
 Present a compact table to the user:
 
@@ -302,10 +302,10 @@ Pick a path:
 | **Build custom** | Nothing suitable, OR fit < 3 across all candidates, OR all licenses block |
 
 State the recommendation in one sentence with the reason. If recommending Build,
-explicitly say *why* every candidate failed — this is the case the user is most
+explicitly say *why* every candidate failed, this is the case the user is most
 worried about.
 
-## Phase 5 — Implement
+## Phase 5: Implement
 
 - **Adopt:** `npm install` / `pip install` / `gh repo clone` and use directly
 - **Extend:** install + write a thin wrapper module in the project; commit the
@@ -319,12 +319,12 @@ research finding (e.g., `# chose httpx over requests because: native async + sam
 
 ## Anti-patterns to refuse
 
-- **Jumping to code** without searching — defeats the whole skill
-- **Silent skipping** — if a channel was unavailable, say so in the report
-- **Stars-only ranking** — a 50k⭐ abandoned repo loses to a 200⭐ actively-maintained one
+- **Jumping to code** without searching, defeats the whole skill
+- **Silent skipping**, if a channel was unavailable, say so in the report
+- **Stars-only ranking**, a 50k⭐ abandoned repo loses to a 200⭐ actively-maintained one
 - **Recommending the user's first guess** without listing alternatives
-- **Over-wrapping** — adopting a library and then writing a 500-line abstraction over it
-- **Ignoring managed APIs** — sometimes $0.001/call beats any OSS option
+- **Over-wrapping**, adopting a library and then writing a 500-line abstraction over it
+- **Ignoring managed APIs**, sometimes $0.001/call beats any OSS option
 
 ## Output format
 
@@ -336,7 +336,7 @@ PRIOR-ART REPORT
 Scope:        <one sentence>
 Searched:     GitHub ✓ | npm ✓ | PyPI ✓ | HuggingFace ✓ | MCP catalogs ✓ | RapidAPI ✓ | Academic (EXA/research-papers/OpenAlex) ✓/n-a
 Top candidates:
-  1. <name> (<stars>⭐, pushed <date>) — score X/5 — <fit notes>
+  1. <name> (<stars>⭐, pushed <date>), score X/5, <fit notes>
   2. ...
 Recommendation: ADOPT | EXTEND | COMPOSE | BUILD
 Reason:       <one or two sentences>

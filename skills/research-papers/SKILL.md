@@ -18,7 +18,7 @@ model: opus
 
 Use this skill to turn broad paper-search requests into a defensible literature search and synthesis. Start broad, narrow with explicit criteria, prefer stable landing pages and full text when available, and separate discovery metadata from evidence claims.
 
-**Full-text reading is the default, not the exception.** For every shortlisted paper, you MUST attempt to fetch and read the *entire* paper content — every page from title to references — not just the abstract or introduction. Download PDFs when HTML full text is unavailable. Only fall back to abstract-based analysis when all full-text access methods have been exhausted and failed.
+**Full-text reading is the default, not the exception.** For every shortlisted paper, you MUST attempt to fetch and read the *entire* paper content, every page from title to references, not just the abstract or introduction. Download PDFs when HTML full text is unavailable. Only fall back to abstract-based analysis when all full-text access methods have been exhausted and failed.
 
 The script that does the fetch (`scripts/fetch_and_parse`) gives you two mechanical aids so the agent cannot skip content by accident: a chunked `read_plan` listing every Read call needed to cover the file, and an `END-OF-PAPER:<sha>` sentinel at the very end of the parsed file. You **must execute every entry in `read_plan`** and you **must quote back the matching sentinel** before producing any synthesis. Skipping either is a protocol violation.
 
@@ -34,7 +34,7 @@ Common requests this skill should handle:
 When executing API calls and web lookups, use whatever tools your platform provides:
 
 - **Full-text fetch + parse (canonical path)**: Use the `scripts/fetch_and_parse` helper. It resolves any identifier (DOI, arXiv ID, PMID, PMCID, URL), runs the OA cascade, downloads the PDF/HTML/XML, and writes a layout-aware Markdown rendering you can read with the harness Read tool. Output is cached at `~/.cache/research-papers/`, so repeat invocations on the same paper are free.
-- **Shell / Bash / terminal**: Use `curl` for *discovery* against research APIs (arXiv, OpenAlex, DBLP, Semantic Scholar, PubMed). Once you have an identifier, switch to `fetch_and_parse` for the full text — do not hand-roll PDF downloads or pass raw PDFs through the Read tool.
+- **Shell / Bash / terminal**: Use `curl` for *discovery* against research APIs (arXiv, OpenAlex, DBLP, Semantic Scholar, PubMed). Once you have an identifier, switch to `fetch_and_parse` for the full text, do not hand-roll PDF downloads or pass raw PDFs through the Read tool.
 - **Web fetch**: Use your platform's web fetch tool only for source pages the script does not handle (publisher search results, ACM landing pages).
 - **Web search**: Use your platform's web search tool for broad discovery when APIs are insufficient.
 - **File read**: Read the reference files in this skill directory for detailed guidance.
@@ -146,7 +146,7 @@ Separate these categories explicitly:
 
 Never imply that arXiv or SSRN papers are peer reviewed unless publication status is verified.
 
-### 6. Read and extract evidence (CRITICAL — read the entire paper)
+### 6. Read and extract evidence (CRITICAL: read the entire paper)
 
 **This is the most important step.** For each shortlisted paper, fetch and read every page of the paper via the `scripts/fetch_and_parse` helper. Do not hand-roll PDF downloads, do not pass raw PDFs to the Read tool, and do not settle for abstracts when full text is accessible.
 
@@ -157,7 +157,7 @@ SKILL_DIR="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/research-papers"
 "$SKILL_DIR/scripts/fetch_and_parse" "<identifier>"
 ```
 
-`<identifier>` can be a DOI, arXiv ID, PMID, PMCID, or URL — in any common form (`10.1038/...`, `arxiv:2301.08243`, `https://arxiv.org/abs/2301.08243`, `PMC4304851`, etc.). The script:
+`<identifier>` can be a DOI, arXiv ID, PMID, PMCID, or URL, in any common form (`10.1038/...`, `arxiv:2301.08243`, `https://arxiv.org/abs/2301.08243`, `PMC4304851`, etc.). The script:
 
 1. Resolves the identifier into canonical IDs.
 2. Runs the OA cascade: arXiv (HTML→PDF) → PMC (XML→HTML) → Unpaywall → OpenAlex `best_oa_location` → Semantic Scholar `openAccessPdf` → Crossref TDM links → DOI landing.
@@ -171,7 +171,7 @@ SKILL_DIR="${CLAUDE_PLUGIN_ROOT:-$HOME/.claude}/skills/research-papers"
 You **MUST**:
 
 1. **Execute every entry in `read_plan` in order.** Each entry maps directly to a Read tool call: `Read(path, offset=offset, limit=limit)`. The plan is sized so each chunk fits the harness's 2000-line page; for short papers it has one entry, for long papers it has several. Reading only the first chunk of a multi-chunk paper is the same as not reading the paper.
-2. **Confirm the sentinel.** The final chunk's last lines contain `<!-- END-OF-PAPER:<sha> -->`. Compare the `<sha>` you see with the `sentinel` field from the script's JSON. If they match, you have read to the end. If you cannot quote the matching sentinel, you have not finished reading — go back and read the remaining chunks before writing any synthesis.
+2. **Confirm the sentinel.** The final chunk's last lines contain `<!-- END-OF-PAPER:<sha> -->`. Compare the `<sha>` you see with the `sentinel` field from the script's JSON. If they match, you have read to the end. If you cannot quote the matching sentinel, you have not finished reading, go back and read the remaining chunks before writing any synthesis.
 3. **Do not skim.** The parsed Markdown contains the abstract, body, figure captions, tables, and references. Methods often hide caveats that contradict the abstract; limitations sections are where authors disclose where their results don't generalize; tables in appendices often hold the headline number behind a claim. Skipping any of these produces a synthesis the user cannot trust.
 
 If `parsed_lines` is missing from the JSON (older cached parses created before this protocol existed), re-run with `--force` to regenerate it; do not proceed without a `read_plan`.
@@ -180,17 +180,17 @@ If `parsed_lines` is missing from the JSON (older cached parses created before t
 
 The `figures` array is your menu of available images. Each entry has:
 
-- `path` — absolute path to a PNG you can pass to the Read tool. The Read tool is multimodal: `Read(path)` on a PNG renders the image inline.
-- `size_kb` — file size hint.
-- `instances` — copies in the source PDF; `>1` is unusual for content figures and may signal repeated decoration that slipped past the filter.
-- `caption_nearby` — `true` when the parsed Markdown has a "Figure N" / "Table N" / "Scheme N" / etc. caption within ~500 chars of the image reference. **Advisory only** — many real figures (chemical structures, schematic insets, equation renders) lack such captions, so do not use this as a hard filter.
+- `path`: absolute path to a PNG you can pass to the Read tool. The Read tool is multimodal: `Read(path)` on a PNG renders the image inline.
+- `size_kb`: file size hint.
+- `instances`: copies in the source PDF; `>1` is unusual for content figures and may signal repeated decoration that slipped past the filter.
+- `caption_nearby`: `true` when the parsed Markdown has a "Figure N" / "Table N" / "Scheme N" / etc. caption within ~500 chars of the image reference. **Advisory only**, many real figures (chemical structures, schematic insets, equation renders) lack such captions, so do not use this as a hard filter.
 
 **Use judgment, not a rule.** Read figures whose content matters to the synthesis question:
 
 - Always read figures cited by name in a passage you are about to summarize ("as shown in Figure 3, …").
 - Read figures whose captions describe quantitative results, benchmarks, ablations, or schematics central to the method.
 - Skip figures whose captions describe peripheral material if your synthesis won't reference them.
-- When `caption_nearby` is `false` and `size_kb` is small (under ~5KB), it is often an inline equation render or sub-component — read it only if the surrounding text indicates it carries meaning.
+- When `caption_nearby` is `false` and `size_kb` is small (under ~5KB), it is often an inline equation render or sub-component, read it only if the surrounding text indicates it carries meaning.
 
 Repeating page decoration (logos, journal banners, watermarks) is filtered before this list reaches you. If you spot something that looks like decoration anyway, ignore it; do not waste a Read call.
 
@@ -198,7 +198,7 @@ Repeating page decoration (logos, journal banners, watermarks) is filtered befor
 
 #### Cascade fallback
 
-The script handles cross-source resolution internally — there is no need to manually try OpenAlex after arXiv fails, or to look up PMID→PMCID, or to retry on 429s. If the script returns `failed`, it has exhausted the cascade. Inspect the `tried` array in the JSON to see what each step returned.
+The script handles cross-source resolution internally, there is no need to manually try OpenAlex after arXiv fails, or to look up PMID→PMCID, or to retry on 429s. If the script returns `failed`, it has exhausted the cascade. Inspect the `tried` array in the JSON to see what each step returned.
 
 If you still want to try a specific URL the cascade missed (e.g., an author homepage), pass the URL directly:
 
@@ -224,7 +224,7 @@ From the parsed Markdown, extract:
 If the script returns `status: "abstract_only"` or `failed`, surface that clearly in the output and explain which steps were tried (from the `tried` field). Tag every claim with its evidence depth:
 
 - Full text `[Full text]`
-- Abstract only `[Abstract only — full text unavailable: {reason from tried log}]`
+- Abstract only `[Abstract only, full text unavailable: {reason from tried log}]`
 - Metadata only `[Metadata only]`
 
 ### 7. Synthesize for the user

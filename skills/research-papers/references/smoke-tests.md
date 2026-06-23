@@ -54,7 +54,7 @@ Full-text note: OpenAlex `open_access` and `best_oa_location` fields are include
 - Result: one unrestricted smoke-test run returned JSON data, while the later rerun returned a JSON error with code `429`
 - Interpretation: endpoint exists and can work from this environment, but anonymous access is unstable and should be treated as rate-limit-sensitive
 
-Full-text note: The `openAccessPdf` field (requested via `fields=openAccessPdf`) returns a URL to a freely accessible PDF when available. Reliability depends on the paper — many CS papers have OA PDFs, but coverage varies by field.
+Full-text note: The `openAccessPdf` field (requested via `fields=openAccessPdf`) returns a URL to a freely accessible PDF when available. Reliability depends on the paper, many CS papers have OA PDFs, but coverage varies by field.
 
 ### PubMed
 
@@ -82,4 +82,4 @@ Full-text note: PMC efetch (`db=pmc&rettype=full&retmode=xml`) provides full-tex
 - **High reliability**: arXiv (HTML and PDF, free), PMC (XML and HTML via efetch, free for PMCID articles), OpenAlex OA metadata (points to external copies)
 - **Medium reliability**: Semantic Scholar `openAccessPdf` (good coverage for CS, variable elsewhere)
 - **Low reliability**: SSRN (bot protection, inconsistent), ACM DL (blocked by Cloudflare)
-- **Not applicable**: DBLP (bibliographic only — use identifiers to resolve full text elsewhere)
+- **Not applicable**: DBLP (bibliographic only, use identifiers to resolve full text elsewhere)

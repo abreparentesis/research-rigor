@@ -407,7 +407,7 @@ def _group_near_duplicates(
 
     has_dhash = any(dh != -1 for _, dh, _ in sigs)
     if not has_dhash:
-        # Pillow unavailable — fall back to exact-byte grouping
+        # Pillow unavailable, fall back to exact-byte grouping
         sha_to_files: dict[str, list[Path]] = {}
         for f, _, sha in sigs:
             sha_to_files.setdefault(sha, []).append(f)
@@ -433,7 +433,7 @@ def _group_near_duplicates(
             continue
         for j in range(i + 1, n):
             if sigs[j][1] == -1:
-                # dHash failed for this image — match by exact bytes only
+                # dHash failed for this image, match by exact bytes only
                 if sigs[i][2] == sigs[j][2]:
                     union(i, j)
                 continue
@@ -612,7 +612,7 @@ def _collect_pdf_figures(
     (header/footer/watermark/journal logo) and deleted along with its
     Markdown references. Surviving groups collapse to a single canonical
     file. Each survivor is surfaced with a `caption_nearby` advisory boolean
-    — true when "Figure N" / "Table N" / "Scheme N" / etc. appears within
+   , true when "Figure N" / "Table N" / "Scheme N" / etc. appears within
     ~500 chars of the reference. The boolean is *not* used to drop images,
     since real figures often lack such captions.
     """
@@ -740,7 +740,7 @@ def parse_html_to_markdown(
     captions in italics, list items, and inline emphasis. Skips chrome
     (script/style/nav/header/footer/aside/noscript/form/iframe). Returns
     (ok, image_refs) where image_refs is a list of (src, alt) tuples
-    extracted from `<img>` tags inside the kept body — callers fetch and
+    extracted from `<img>` tags inside the kept body, callers fetch and
     filter these via _collect_html_figures. The output is what gets
     written to parsed.md, so downstream agents see real `## Methods` /
     `## Results` headings instead of flat text.
@@ -1397,7 +1397,7 @@ def try_crossref(pid: PaperID, result: FetchResult) -> bool:
     )
     # Crossref's REST endpoint returns its native JSON
     # (application/vnd.crossref-api-message+json) by default. Don't request
-    # CSL JSON here — that representation isn't served at /works/{doi} and
+    # CSL JSON here, that representation isn't served at /works/{doi} and
     # produces 406 Not Acceptable.
     headers = {"Accept": "application/json"}
     if email:
@@ -1451,7 +1451,7 @@ def try_doi_landing(pid: PaperID, result: FetchResult) -> bool:
                 # DOI landing pages are usually paywall stubs, not full text
                 result.status = "abstract_only"
                 result.note = (
-                    "DOI landing page reached — likely abstract or paywall, not full text"
+                    "DOI landing page reached, likely abstract or paywall, not full text"
                 )
                 _record(result, "doi_landing", "ok html (likely abstract)")
                 return True
@@ -1518,7 +1518,7 @@ def fetch_and_parse(identifier: str, force: bool = False) -> FetchResult:
         cached = cached_result(pid)
         if cached and cached.status in ("ok", "abstract_only"):
             cached.tried.append({"step": "cache", "outcome": "hit"})
-            # Idempotent — upgrades older cached parses that lack a sentinel
+            # Idempotent, upgrades older cached parses that lack a sentinel
             # or read_plan to the current schema.
             _finalize_result(pid, cached)
             save_meta(pid, cached)

@@ -11,7 +11,7 @@ Default rule:
 
 ## Full-Text Resolution
 
-**Use the bundled `scripts/fetch_and_parse` helper** — do not hand-roll this cascade. The helper resolves any identifier, runs the cascade below, downloads the best available source, parses to layout-aware Markdown, and caches the result.
+**Use the bundled `scripts/fetch_and_parse` helper**, do not hand-roll this cascade. The helper resolves any identifier, runs the cascade below, downloads the best available source, parses to layout-aware Markdown, and caches the result.
 
 ```bash
 "$HOME/.claude/skills/research-papers/scripts/fetch_and_parse" "<doi|arxiv_id|pmid|pmcid|url>"
@@ -38,18 +38,18 @@ The script prints JSON describing what it did, including `parsed_path` (the Mark
 
 The cascade is meaningfully more reliable with these set:
 
-- `OPENALEX_EMAIL` — enables OpenAlex polite pool (`mailto=`); also used as Unpaywall fallback email.
-- `UNPAYWALL_EMAIL` — required by Unpaywall (free; falls back to `OPENALEX_EMAIL`). Without this, step 5 is skipped.
-- `SEMANTIC_SCHOLAR_API_KEY` — avoids 429s on Semantic Scholar.
-- `NCBI_API_KEY`, `NCBI_EMAIL`, `NCBI_TOOL` — higher PMC/PubMed rate.
+- `OPENALEX_EMAIL`: enables OpenAlex polite pool (`mailto=`); also used as Unpaywall fallback email.
+- `UNPAYWALL_EMAIL`: required by Unpaywall (free; falls back to `OPENALEX_EMAIL`). Without this, step 5 is skipped.
+- `SEMANTIC_SCHOLAR_API_KEY`: avoids 429s on Semantic Scholar.
+- `NCBI_API_KEY`, `NCBI_EMAIL`, `NCBI_TOOL`, higher PMC/PubMed rate.
 
 ### PDF parsing
 
 The script parses PDFs to Markdown using the best available of:
 
-1. `pymupdf4llm` — layout-aware Markdown (preserves headings, sections, tables, figure captions). Pre-installed in `scripts/.venv` on first run via `requirements.txt`.
-2. `pymupdf` — text-only fallback.
-3. `pdftotext` (poppler binary) — last resort.
+1. `pymupdf4llm`, layout-aware Markdown (preserves headings, sections, tables, figure captions). Pre-installed in `scripts/.venv` on first run via `requirements.txt`.
+2. `pymupdf`, text-only fallback.
+3. `pdftotext` (poppler binary), last resort.
 
 After the script returns `status: ok`, **read the file at `parsed_path`** with the harness Read tool. Do not pass raw PDFs to Read directly.
 
@@ -70,9 +70,9 @@ Useful queries:
 ### Rules
 
 - **Always invoke the script for full text.** Do not curl PDFs by hand and do not pass raw PDFs to the harness Read tool.
-- The script enforces retries with exponential backoff on 429/5xx — do not add your own retry logic on top.
+- The script enforces retries with exponential backoff on 429/5xx, do not add your own retry logic on top.
 - The `tried` array in the script's JSON output is your record of what was attempted. Surface its contents to the user when full-text access fails.
-- If `status` is `abstract_only`, the script has populated `abstract` (when available) — use that as your evidence source and tag claims accordingly.
+- If `status` is `abstract_only`, the script has populated `abstract` (when available), use that as your evidence source and tag claims accordingly.
 
 ## Source Matrix
 
@@ -100,8 +100,8 @@ curl -sS 'https://export.arxiv.org/api/query?search_query=all:graph+neural+netwo
 
 Full text:
 
-- HTML (preferred): `https://arxiv.org/html/{arxiv_id}` — readable, structured, best for extraction
-- PDF: `https://arxiv.org/pdf/{arxiv_id}` — fallback when HTML is unavailable
+- HTML (preferred): `https://arxiv.org/html/{arxiv_id}`, readable, structured, best for extraction
+- PDF: `https://arxiv.org/pdf/{arxiv_id}`, fallback when HTML is unavailable
 
 Examples:
 
@@ -127,7 +127,7 @@ Rules:
 - Public API: yes
 - Best for: broad discovery, filtering, DOI or PMID resolution, citation-oriented expansion
 - Response format: JSON
-- Auth: none. Add `mailto=<email>` to enter the polite pool (free, recommended). `api_key=` exists only for OpenAlex Premium plans — do not use it unless you actually have a paid key.
+- Auth: none. Add `mailto=<email>` to enter the polite pool (free, recommended). `api_key=` exists only for OpenAlex Premium plans, do not use it unless you actually have a paid key.
 - Official docs: https://developers.openalex.org/api-reference/introduction
 - LLM-oriented guide: https://developers.openalex.org/guides/llm-quick-reference
 
@@ -140,7 +140,7 @@ Use:
 - `per_page=` up to 100
 - `cursor=` for deep pagination
 - `/works/doi:...` or `/works/pmid:...` for direct lookup
-- `mailto=$OPENALEX_EMAIL` — always include when the env var is set (free polite-pool)
+- `mailto=$OPENALEX_EMAIL`: always include when the env var is set (free polite-pool)
 
 Example:
 
@@ -166,13 +166,13 @@ curl -sS "https://api.openalex.org/works?search=graph%20neural%20network&filter=
 
 Rules:
 
-- Always include `mailto=$OPENALEX_EMAIL` in requests when the environment variable is available — this enters the free polite pool with better rate limits.
+- Always include `mailto=$OPENALEX_EMAIL` in requests when the environment variable is available, this enters the free polite pool with better rate limits.
 - Do not pass `api_key=` unless you have an OpenAlex Premium subscription. The free polite pool is `mailto=`.
 - Resolve names to IDs first when filtering by author, institution, source, topic, publisher, or funder.
 - Do not filter directly on ambiguous names if an entity ID can be resolved first.
 - Use `select=` aggressively; the default payload is large.
 - Prefer DOI lookup when the DOI is known.
-- For full-text resolution, prefer the `scripts/fetch_and_parse` helper — it already handles the OpenAlex OA cascade including `locations[]` fallback when `best_oa_location` is empty.
+- For full-text resolution, prefer the `scripts/fetch_and_parse` helper, it already handles the OpenAlex OA cascade including `locations[]` fallback when `best_oa_location` is empty.
 
 ### ACM Digital Library
 
@@ -366,7 +366,7 @@ Use SSRN programmatically like this:
 Full text:
 
 - Fetch the abstract page at `https://ssrn.com/abstract={ssrn_id}` and look for PDF download links.
-- Access is inconsistent — treat as best-effort. Bot protection may block scripted requests.
+- Access is inconsistent, treat as best-effort. Bot protection may block scripted requests.
 
 Rules:
 
@@ -379,14 +379,14 @@ Rules:
 
 These optional environment variables improve reliability when set. The `scripts/fetch_and_parse` helper reads all of them; `curl`-based discovery should pass them too.
 
-- `OPENALEX_EMAIL` — passed as `mailto=` to OpenAlex (free polite pool); also used as Unpaywall fallback email
-- `UNPAYWALL_EMAIL` — passed to Unpaywall (required by their API; free). Falls back to `OPENALEX_EMAIL` if unset.
-- `SEMANTIC_SCHOLAR_API_KEY` — included as `x-api-key:` header in Semantic Scholar requests
-- `NCBI_API_KEY` — included in PubMed/PMC requests for higher rate limits
-- `NCBI_EMAIL` — included in PubMed/PMC requests as good citizen identification
-- `NCBI_TOOL` — included in PubMed/PMC requests as tool identification
+- `OPENALEX_EMAIL`: passed as `mailto=` to OpenAlex (free polite pool); also used as Unpaywall fallback email
+- `UNPAYWALL_EMAIL`: passed to Unpaywall (required by their API; free). Falls back to `OPENALEX_EMAIL` if unset.
+- `SEMANTIC_SCHOLAR_API_KEY`: included as `x-api-key:` header in Semantic Scholar requests
+- `NCBI_API_KEY`: included in PubMed/PMC requests for higher rate limits
+- `NCBI_EMAIL`: included in PubMed/PMC requests as good citizen identification
+- `NCBI_TOOL`: included in PubMed/PMC requests as tool identification
 
-`OPENALEX_API_KEY` is intentionally **not** in this list — `api_key=` on OpenAlex is for paid Premium subscribers only. The free, recommended mechanism is `mailto=$OPENALEX_EMAIL`.
+`OPENALEX_API_KEY` is intentionally **not** in this list, `api_key=` on OpenAlex is for paid Premium subscribers only. The free, recommended mechanism is `mailto=$OPENALEX_EMAIL`.
 
 ## Client Design Rules
 
