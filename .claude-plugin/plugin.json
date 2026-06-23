@@ -1,0 +1,18 @@
+{
+  "name": "convergent-review",
+  "version": "0.1.0",
+  "description": "Harden a spec, plan, PR diff, or document by running fresh, diverse, non-anchored critics in rounds until it genuinely converges, instead of trusting the first reviewer's \"looks good.\" Ships two purpose-built critic agents (oracle, council) and a stopping rule grounded in published findings on iterative LLM refinement.",
+  "author": { "name": "Sebastian" },
+  "license": "MIT",
+  "keywords": [
+    "review",
+    "convergence",
+    "adversarial",
+    "multi-agent",
+    "self-correction",
+    "code-review",
+    "spec-review"
+  ],
+  "skills": "./skills/",
+  "agents": "./agents/"
+}
