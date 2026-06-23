@@ -76,6 +76,7 @@ Dispatch fresh subagents with the Agent tool, one per assigned lens. This packag
 - Demand the structure: `VERDICT: CONVERGED | IMPROVEMENTS REMAIN`; a ranked list of **material-only** findings, each tagged `[CUT]/[MERGE]/[CHANGE]/[SHARPEN]/[ADD]` + axis + exact location + one-line fix; and a one-line biggest-risk.
 - Hard rules in the prompt: "material only; no cosmetic nits; no speculative features; if a fix adds bloat say so; CONVERGED is the correct answer if nothing material remains; do not invent work."
 - For breadth in one round, emit multiple Agent calls in a **single message** so they run in parallel; then you synthesize.
+- **Search provider (optional, auto-detected):** the `oracle` critic verifies external claims with whatever search is installed, preferring a semantic-search MCP (Exa, Perplexity, or any other web-search MCP) and falling back to built-in `WebSearch`/`WebFetch`. Never required; if nothing is connected, the built-ins are used.
 
 ## Synthesis & curation (the part you must own)
 This is why this is a Skill, not a hands-off Workflow: the main loop curates with full context and the user in the loop.

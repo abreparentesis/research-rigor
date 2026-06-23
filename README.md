@@ -39,6 +39,15 @@ The two bundled agents default to Opus and need no configuration. The skill disp
 
 Both emit the same protocol the skill curates: a `VERDICT`, a ranked list of material-only findings with exact locations and one-line fixes, and a one-line biggest risk.
 
+### Optional: semantic search
+
+When `oracle` needs to verify an external claim (a library API, a version, a fact), it uses whatever search is installed, in this order:
+
+1. A semantic-search MCP if one is connected, preferring [Exa](https://exa.ai) (`mcp__exa__*`) or [Perplexity](https://www.perplexity.ai) (`mcp__perplexity*`), then any other web-search MCP it can see.
+2. The built-in `WebSearch` and `WebFetch` otherwise.
+
+This is auto-detected and optional. On a clean install with no search MCP, the built-ins are used and nothing breaks. To wire a provider whose tool name the agent does not already list (for example a self-hosted or differently-named MCP server), add that tool's name to the `tools:` line in [`agents/oracle.md`](agents/oracle.md); the preference logic in the agent picks it up automatically.
+
 ## Defaults
 
 | Parameter | Default | Note |
