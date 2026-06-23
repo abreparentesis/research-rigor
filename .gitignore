@@ -1,1 +1,9 @@
 .DS_Store
+
+# research-papers script bootstraps a local virtualenv on first use
+**/.venv/
+__pycache__/
+*.pyc
+
+# research-papers fetch cache (lives under ~/.cache by default; ignore if vendored)
+.cache/

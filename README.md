@@ -1,62 +1,60 @@
-# convergent-review
+# research-rigor
 
-A Claude Code plugin that hardens a design spec, plan, PR diff, or document by running adversarial review in rounds until it genuinely converges, instead of trusting one reviewer's first "looks good."
+A rigor toolkit for researchers and research engineers, packaged as a Claude Code plugin. It covers three phases of disciplined work and ships the critic agents that drive them.
 
-A single reviewer, or the same reviewer run twice, tends to anchor on its earlier read and rubber-stamp the work. This plugin counters that with three rules: review with separate critic agents rather than self-review, keep each round's critic blind to prior verdicts, and rotate the analytical lens between rounds. It stops only after K consecutive clean rounds and caps the total at MAX_ROUNDS, so it does not over-refine work that is already good.
+| Phase | Skill | What it does |
+|---|---|---|
+| Before you build | [`prior-art-check`](skills/prior-art-check/SKILL.md) | Searches GitHub, npm/PyPI, HuggingFace, MCP catalogs, managed APIs, and academic prior art, then returns a scored Adopt / Extend / Compose / Build recommendation. Don't rebuild what already exists. |
+| Literature search | [`research-papers`](skills/research-papers/SKILL.md) | Turns a topic into a defensible literature search across arXiv, OpenAlex, DBLP, Semantic Scholar, PubMed, and SSRN, with full-text fetch, citation-graph ranking, and a non-skip reading protocol. |
+| After you draft | [`convergent-review`](skills/convergent-review/SKILL.md) | Hardens a spec, plan, diff, or document by running fresh, diverse, non-anchored critics in rounds until it genuinely converges, instead of trusting the first reviewer's "looks good." |
 
-The package ships the [skill](skills/convergent-review/SKILL.md) plus two purpose-built critic agents, [`oracle`](agents/oracle.md) (strategic lens) and [`council`](agents/council.md) (adversarial two-pass lens), that already speak the review protocol.
-
-## What it does
-
-1. Dispatch fresh critic subagents for the round, each assigned a distinct lens and told that "converged" is a valid answer.
-2. Curate their findings: dedupe, drop cosmetic nits, reject scope creep, keep only the material ones.
-3. If anything material remains, apply the fixes to the target and start a new round on the revised version.
-4. Repeat until K rounds in a row come back clean, then report the per-round trajectory and the converged result.
+The plugin also ships two purpose-built critic agents used by `convergent-review`: [`oracle`](agents/oracle.md) (strategic lens) and [`council`](agents/council.md) (adversarial two-pass lens).
 
 ## Install
 
-As a plugin (registers the skill and both agents):
-
 ```
-/plugin marketplace add <your-org>/convergent-review
-/plugin install convergent-review
+/plugin marketplace add <your-org>/research-rigor
+/plugin install research-rigor
 ```
 
-Or vendor it into a project by copying the `skills/` and `agents/` folders into the project's `.claude/` directory.
+Or vendor it into a project by copying the `skills/` and `agents/` folders into the project's `.claude/` directory. Each skill also works on its own if you copy just its folder into `~/.claude/skills/`.
 
-Skill only, without the bundled critics: copy `skills/convergent-review/` into `~/.claude/skills/` (personal) or `.claude/skills/` (project). The skill then falls back to the built-in `general-purpose` agent for its critics.
+Invoke a skill by describing the task ("does this already exist?", "find the top papers on X", "harden this spec until it converges") or by naming it directly.
 
-Invoke it by asking to "harden this," "review until converged," "stress-test this design," or by naming the skill directly.
+## Optional capabilities (auto-detected)
+
+Every external provider is optional. The skills inspect what is available at runtime, prefer the strongest option present, and fall back to built-in tools when nothing is connected. Nothing here is required to install or run the plugin, but provisioning these gives better results.
+
+| Capability | Used by | If absent, falls back to | Recommended to provision |
+|---|---|---|---|
+| `gh` CLI (authenticated) | prior-art-check | `WebSearch site:github.com` | Yes. GitHub is the primary prior-art surface. |
+| Exa or Perplexity MCP, or any web-search MCP | oracle, prior-art-check, research-papers | built-in `WebSearch` / `WebFetch` | Optional. Richer, ranked semantic search. |
+| OpenAlex polite-pool email (`OPENALEX_EMAIL`) | research-papers, prior-art-check | keyless common pool (slower) | Yes. Free, just an email, roughly doubles full-text recovery. |
+| HuggingFace public API (`curl`) | prior-art-check | `WebFetch` of huggingface.co | Optional, keyless. |
+| Python deps for full-text parsing (`pymupdf4llm`, `Pillow`) | research-papers | `pdftotext`, then abstract-only | Yes. The script bootstraps its own virtualenv on first use. |
+| `SEMANTIC_SCHOLAR_API_KEY`, `NCBI_API_KEY` | research-papers | keyless pools (rate-limited) | Optional, higher rate limits. |
+| Managed-API catalogs (RapidAPI, Composio, Pipedream, Zapier) | prior-art-check | skipped with a note | Optional, for the "API for cents" angle. |
+
+No paid inference API is ever called. The optional providers above are free or free-tier by default; paid managed APIs are only ever surfaced as candidates for you to evaluate, never invoked.
+
+To wire a provider whose tool name the agents do not already list (for example a self-hosted or differently-named search MCP), add that tool's name to the `tools:` line in [`agents/oracle.md`](agents/oracle.md).
 
 ## The critics
 
-The two bundled agents default to Opus and need no configuration. The skill dispatches them as a diverse pair so each round gets real lens diversity rather than two copies of the same reviewer.
+`convergent-review` dispatches the two bundled agents as a diverse pair so each round gets real lens diversity rather than two copies of the same reviewer.
 
 | Agent | Lens | Tools |
 |---|---|---|
-| `oracle` | Strategic and architectural: overclaiming, simplicity, feasibility, internal consistency, over-cut. | Read, Grep, Glob, Bash, WebSearch, WebFetch |
+| `oracle` | Strategic and architectural: overclaiming, simplicity, feasibility, internal consistency, over-cut. | Read, Grep, Glob, Bash, web search (built-in or semantic MCP) |
 | `council` | Adversarial two-pass: correctness, regression, edge cases, coverage, security, then a self-challenge of its own findings. | Read, Grep, Glob, Bash |
 
-Both emit the same protocol the skill curates: a `VERDICT`, a ranked list of material-only findings with exact locations and one-line fixes, and a one-line biggest risk.
-
-### Optional: semantic search
-
-When `oracle` needs to verify an external claim (a library API, a version, a fact), it uses whatever search is installed, in this order:
-
-1. A semantic-search MCP if one is connected, preferring [Exa](https://exa.ai) (`mcp__exa__*`) or [Perplexity](https://www.perplexity.ai) (`mcp__perplexity*`), then any other web-search MCP it can see.
-2. The built-in `WebSearch` and `WebFetch` otherwise.
-
-This is auto-detected and optional. On a clean install with no search MCP, the built-ins are used and nothing breaks. To wire a provider whose tool name the agent does not already list (for example a self-hosted or differently-named MCP server), add that tool's name to the `tools:` line in [`agents/oracle.md`](agents/oracle.md); the preference logic in the agent picks it up automatically.
-
-## Defaults
+## convergent-review defaults
 
 | Parameter | Default | Note |
 |---|---|---|
 | K (consecutive clean rounds) | 2 | Raise to 3 for high-stakes work. |
 | MAX_ROUNDS | 6 | Hard cap. Iteration helps early, then plateaus. |
 | Critics per round | 2 | 1 for small targets, 3 for large. Always diverse lenses. |
-
-## Evidence
 
 The defaults come from published findings on iterative LLM refinement:
 
@@ -69,4 +67,8 @@ The defaults come from published findings on iterative LLM refinement:
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE). `prior-art-check` and `research-papers` credit their upstream sources in each skill's Provenance section.
+
+## Credits
+
+- `prior-art-check` composes workflow and decision-matrix ideas from `affaan-m/ECC`, `mturac/skill-hunter`, `hashicorp/agent-skills`, `ComposioHQ/awesome-claude-skills`, and `VoltAgent/awesome-agent-skills`. See the skill's Provenance section.

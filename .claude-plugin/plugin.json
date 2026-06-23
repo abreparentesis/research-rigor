@@ -1,17 +1,19 @@
 {
-  "name": "convergent-review",
+  "name": "research-rigor",
   "version": "0.1.0",
-  "description": "Harden a spec, plan, PR diff, or document by running fresh, diverse, non-anchored critics in rounds until it genuinely converges, instead of trusting the first reviewer's \"looks good.\" Ships two purpose-built critic agents (oracle, council) and a stopping rule grounded in published findings on iterative LLM refinement.",
+  "description": "A rigor toolkit for researchers and research engineers. Find prior art before you build (prior-art-check), run a defensible literature search (research-papers), and harden a spec, plan, diff, or document to genuine convergence with diverse adversarial critics (convergent-review). Ships the oracle and council critic agents. External search providers (Exa, GitHub, OpenAlex, and more) are optional and auto-detected, with graceful fallback to built-in tools.",
   "author": { "name": "Sebastian" },
   "license": "MIT",
   "keywords": [
-    "review",
+    "research",
+    "literature-review",
+    "prior-art",
+    "reuse-first",
     "convergence",
-    "adversarial",
+    "adversarial-review",
     "multi-agent",
     "self-correction",
-    "code-review",
-    "spec-review"
+    "code-review"
   ],
   "skills": "./skills/",
   "agents": "./agents/"
