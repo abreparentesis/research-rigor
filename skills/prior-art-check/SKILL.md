@@ -1,6 +1,6 @@
 ---
 name: prior-art-check
-description: Use AFTER scoping is clear (or as the structured-search phase inside `superpowers:brainstorming`) and BEFORE writing any custom code for a non-trivial feature, module, integration, library, service, or utility. Searches GitHub (PRIMARY), npm/PyPI, HuggingFace Hub (pretrained models, for ML/AI features), MCP server catalogs (ComposioHQ + VoltAgent awesome lists), managed-API providers (RapidAPI, Composio, Pipedream, Zapier), and — for algorithm- or research-shaped features only — academic prior art (EXA fast pass, escalating to the `research-papers` lit-review skill, with a keyless OpenAlex fallback), then returns a structured Adopt / Extend / Compose / Build recommendation with maturity signals. Complements brainstorming — brainstorming clarifies WHAT to build, prior-art-check determines IF it already exists.
+description: Use AFTER scoping is clear (or as the structured-search phase inside `design-spec`) and BEFORE writing any custom code for a non-trivial feature, module, integration, library, service, or utility. Searches GitHub (PRIMARY), npm/PyPI, HuggingFace Hub (pretrained models, for ML/AI features), MCP server catalogs (ComposioHQ + VoltAgent awesome lists), managed-API providers (RapidAPI, Composio, Pipedream, Zapier), and — for algorithm- or research-shaped features only — academic prior art (EXA fast pass, escalating to the `research-papers` lit-review skill, with a keyless OpenAlex fallback), then returns a structured Adopt / Extend / Compose / Build recommendation with maturity signals. Complements design-spec — design-spec clarifies WHAT to build, prior-art-check determines IF it already exists.
 ---
 
 # prior-art-check — Don't Build What Already Exists
@@ -10,15 +10,15 @@ Inherits the 5-phase workflow from `affaan-m/ECC` `search-first` and the explici
 decision matrix from `mturac/skill-hunter`, re-weighted so **GitHub is the primary
 search surface** (OSS-first reuse as the default weighting).
 
-## Relationship to `superpowers:brainstorming`
+## Relationship to `design-spec`
 
 These skills CHAIN, they don't compete:
 
-1. **`superpowers:brainstorming`** fires FIRST when build intent is vague. It
+1. **`design-spec`** fires FIRST when build intent is vague. It
    clarifies *what* the user actually wants (intent, requirements, constraints,
    acceptance criteria). Its "Search Before Building" phase is a placeholder.
 2. **`prior-art-check`** (this skill) fires NEXT, once scope is clear enough to
-   query a registry. It IS the structured implementation of brainstorming's
+   query a registry. It IS the structured implementation of design-spec's
    "Search Before Building" phase: real `gh search`, `npm search`, MCP catalog
    sweeps, managed-API checks, and a scored Adopt / Extend / Compose / Build
    recommendation.
@@ -26,20 +26,20 @@ These skills CHAIN, they don't compete:
 
 If scope is already crisp (the user gave a specific feature with constraints),
 skip straight to this skill. If scope is vague ("build me a chat app"),
-brainstorming first.
+design-spec first.
 
 ## When to fire
 
 **Auto-trigger** when the user expresses a build/integrate intent AND scope is
 crisp enough to query a registry. Examples:
 
-- "let's add real-time chat with auth" (after brainstorming has clarified scale, auth provider, persistence)
+- "let's add real-time chat with auth" (after design-spec has clarified scale, auth provider, persistence)
 - "build a PDF parser for invoice extraction, must run offline"
 - "implement rate limiting per-user, sliding window"
 - "integrate Stripe billing — recurring subscriptions only"
 - "set up a Redis-backed job queue for image resizing"
 
-**Manual invocation:** `/prior-art <topic>` (skips brainstorming when scope is
+**Manual invocation:** `/prior-art <topic>` (skips design-spec when scope is
 already clear)
 
 **Skip** if any of these are true:
@@ -47,7 +47,7 @@ already clear)
 - Work is fully contained inside an existing module the user is already editing
 - User explicitly said "skip the search, just build it"
 - Task is exploratory question-answering, not implementation
-- Scope is still vague — defer to `superpowers:brainstorming` to scope first
+- Scope is still vague — defer to `design-spec` to scope first
 
 ## Workflow
 

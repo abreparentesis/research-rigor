@@ -1,7 +1,7 @@
 {
   "name": "research-rigor",
   "version": "0.1.0",
-  "description": "A rigor toolkit for researchers and research engineers. Find prior art before you build (prior-art-check), run a defensible literature search (research-papers), and harden a spec, plan, diff, or document to genuine convergence with diverse adversarial critics (convergent-review). Ships the oracle and council critic agents. External search providers (Exa, GitHub, OpenAlex, and more) are optional and auto-detected, with graceful fallback to built-in tools.",
+  "description": "A self-contained rigor toolkit for researchers and research engineers. Decide what to build (design-spec), find prior art before building it (prior-art-check), run a defensible literature search (research-papers), harden the decisions to genuine convergence with diverse adversarial critics (convergent-review), and turn the spec into a reviewable implementation plan (implementation-plan), orchestrated end to end by project-kickoff. Ships the oracle and council critic agents. External search providers (Exa, GitHub, OpenAlex, and more) are optional and auto-detected, with graceful fallback to built-in tools.",
   "author": { "name": "Sebastian" },
   "license": "MIT",
   "keywords": [

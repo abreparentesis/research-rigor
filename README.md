@@ -1,12 +1,15 @@
 # research-rigor
 
-A rigor toolkit for researchers and research engineers, packaged as a Claude Code plugin. It covers three phases of disciplined work and ships the critic agents that drive them.
+A rigor toolkit for researchers and research engineers, packaged as a Claude Code plugin. It covers the full arc of disciplined work, from deciding what to build to hardening how you build it, and ships the critic agents that drive the review. It is self-contained: no dependency on another plugin at runtime.
 
 | Phase | Skill | What it does |
 |---|---|---|
-| Before you build | [`prior-art-check`](skills/prior-art-check/SKILL.md) | Searches GitHub, npm/PyPI, HuggingFace, MCP catalogs, managed APIs, and academic prior art, then returns a scored Adopt / Extend / Compose / Build recommendation. Don't rebuild what already exists. |
+| Decide what to build | [`design-spec`](skills/design-spec/SKILL.md) | Brainstorms intent, requirements, and design through one-question-at-a-time dialogue, proposes 2-3 approaches, and writes an approved design spec. The WHAT, before any HOW. |
+| Don't rebuild it | [`prior-art-check`](skills/prior-art-check/SKILL.md) | Searches GitHub, npm/PyPI, HuggingFace, MCP catalogs, managed APIs, and academic prior art, then returns a scored Adopt / Extend / Compose / Build recommendation. |
 | Literature search | [`research-papers`](skills/research-papers/SKILL.md) | Turns a topic into a defensible literature search across arXiv, OpenAlex, DBLP, Semantic Scholar, PubMed, and SSRN, with full-text fetch, citation-graph ranking, and a non-skip reading protocol. |
-| After you draft | [`convergent-review`](skills/convergent-review/SKILL.md) | Hardens a spec, plan, diff, or document by running fresh, diverse, non-anchored critics in rounds until it genuinely converges, instead of trusting the first reviewer's "looks good." |
+| Harden the decisions | [`convergent-review`](skills/convergent-review/SKILL.md) | Runs fresh, diverse, non-anchored critics in rounds until a spec, plan, diff, or document genuinely converges, instead of trusting the first reviewer's "looks good." |
+| Plan the build | [`implementation-plan`](skills/implementation-plan/SKILL.md) | Turns a spec into a step-by-step, reviewable plan of bite-sized, independently testable tasks, then hands off to execution. |
+| Run the whole arc | [`project-kickoff`](skills/project-kickoff/SKILL.md) | Orchestrates the above: design-spec, prior-art, a Decision Record, convergent-review to harden by argument, cheapest-first de-risking, then implementation-plan. |
 
 The plugin also ships two purpose-built critic agents used by `convergent-review`: [`oracle`](agents/oracle.md) (strategic lens) and [`council`](agents/council.md) (adversarial two-pass lens).
 
@@ -67,8 +70,9 @@ The defaults come from published findings on iterative LLM refinement:
 
 ## License
 
-[MIT](LICENSE). `prior-art-check` and `research-papers` credit their upstream sources in each skill's Provenance section.
+[MIT](LICENSE). Third-party attributions are in [NOTICE](NOTICE).
 
 ## Credits
 
+- `design-spec` and `implementation-plan` are adapted from the `brainstorming`, `writing-plans`, and `executing-plans` skills in [obra/superpowers](https://github.com/obra/superpowers) (MIT), decoupled to run self-contained, with spec and task discipline influenced by [github/spec-kit](https://github.com/github/spec-kit) (MIT).
 - `prior-art-check` composes workflow and decision-matrix ideas from `affaan-m/ECC`, `mturac/skill-hunter`, `hashicorp/agent-skills`, `ComposioHQ/awesome-claude-skills`, and `VoltAgent/awesome-agent-skills`. See the skill's Provenance section.
