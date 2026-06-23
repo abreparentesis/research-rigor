@@ -1,0 +1,29 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "research-rigor",
+  "owner": {
+    "name": "Sebastian",
+    "github": "abreparentesis"
+  },
+  "metadata": {
+    "description": "A self-contained rigor toolkit for researchers and research engineers."
+  },
+  "plugins": [
+    {
+      "name": "research-rigor",
+      "source": "./",
+      "description": "Decide what to build (design-spec), find prior art (prior-art-check), run a defensible literature search (research-papers), harden decisions to convergence (convergent-review), and turn a spec into a reviewable implementation plan (implementation-plan), orchestrated end to end by project-kickoff. Ships the oracle and council critic agents. Optional, auto-detected search providers with built-in fallback.",
+      "version": "0.1.0",
+      "category": "development",
+      "keywords": [
+        "research",
+        "literature-review",
+        "prior-art",
+        "convergence",
+        "adversarial-review",
+        "planning",
+        "multi-agent"
+      ]
+    }
+  ]
+}
