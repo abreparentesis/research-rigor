@@ -14,7 +14,5 @@
     "multi-agent",
     "self-correction",
     "code-review"
-  ],
-  "skills": "./skills/",
-  "agents": "./agents/"
+  ]
 }
